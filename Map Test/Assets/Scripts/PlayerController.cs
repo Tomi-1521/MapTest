@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     private int mapCol, mapRow;
     private char[,] mapData;
 
-    private GameObject startSquare;     // スタートマス
+    public GameObject startSquare;     // スタートマス
     public Vector3 offsetPos;       // プレーヤー位置調整
     private int xIndex, zIndex;     // mapDataにおけるプレイヤーの位置
 
@@ -24,10 +24,11 @@ public class PlayerController : MonoBehaviour
         LoadMap();
 
         // プレーヤーの初期座標設定
-        startSquare = GameObject.Find("Squares/Square(4,7)");
+        //startSquare = GameObject.Find("Squares/Square(4,7)");
         Vector3 startPos = startSquare.transform.position + offsetPos;
         this.transform.position = startPos;
-        zIndex = 4 * 2; xIndex = 7 * 2;
+        zIndex = (100 - (int)startPos.z) / 2;
+        xIndex = (int)startPos.x / 2;
     }
 
     void Update()

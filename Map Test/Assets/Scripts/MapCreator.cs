@@ -9,6 +9,7 @@ public class MapCreator : MonoBehaviour
 
     // 配置するオブジェクト
     public GameObject square;
+    public GameObject cardSquare;
     public GameObject pathX;
     public GameObject pathZ;
 
@@ -64,6 +65,14 @@ public class MapCreator : MonoBehaviour
                 else if (c == '#')
                 {
                     obj = Instantiate(square, pos, Quaternion.identity, squareParent.transform) as GameObject;
+                    obj.name = square.name + "(" + zIndex + "," + xIndex + ")";
+                    pos.x += spaceScale.x;
+                    xIndex++;
+                    col++;
+                }
+                else if (c == '@')
+                {
+                    obj = Instantiate(cardSquare, pos, Quaternion.identity, squareParent.transform) as GameObject;
                     obj.name = square.name + "(" + zIndex + "," + xIndex + ")";
                     pos.x += spaceScale.x;
                     xIndex++;

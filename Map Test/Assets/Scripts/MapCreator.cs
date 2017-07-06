@@ -5,18 +5,22 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class MapCreator : MonoBehaviour
 {
+    public bool laySquare;
+    public bool layCard;
+
+    // マップのテキストファイル
 	public TextAsset textAsset;
 
     // 配置するオブジェクト
     public GameObject square;
     public GameObject cardSquare;
-    public GameObject pathX;
-    public GameObject pathZ;
+    public GameObject path;
+    public GameObject card;
 
     // 親となるオブジェクト
-    public GameObject squareParent;
-    public GameObject pathXParent;
-    public GameObject pathZParent;
+    private GameObject squareParent;
+    private GameObject pathParent;
+    private GameObject cardParent;
 
     public Vector3 createPos;
 
@@ -26,14 +30,20 @@ public class MapCreator : MonoBehaviour
     void Start ()
     {
         CreateMap(createPos);
-
-        createPos = Vector3.zero;
 	}
     void CreateMap(Vector3 pos)
     {
         Vector3 originPos = pos;
         string mapTextData = textAsset.text;
-
+        if (laySquare)
+        {
+            squareParent = new GameObject("Squares");
+            pathParent = new GameObject("Path");
+        }
+        if (layCard)
+        {
+            cardParent = new GameObject("Cards");
+        }
 		int xIndex = 0, zIndex = 0;
         int col = 0, row = 0;
         foreach(char c in mapTextData)
@@ -62,18 +72,29 @@ public class MapCreator : MonoBehaviour
                     xIndex++;
                     col++;
                 }
-                else if (c == '#')
+                else if (c == '#')  // 通常マス
                 {
-                    obj = Instantiate(square, pos, Quaternion.identity, squareParent.transform) as GameObject;
-                    obj.name = square.name + "(" + zIndex + "," + xIndex + ")";
+                    if (laySquare)
+                    {
+                        obj = Instantiate(square, pos, Quaternion.identity, squareParent.transform) as GameObject;
+                        obj.name = square.name + " (" + zIndex + "," + xIndex + ")";
+                    }
                     pos.x += spaceScale.x;
                     xIndex++;
                     col++;
                 }
-                else if (c == '@')
+                else if (c == '@')  // カードマス
                 {
-                    obj = Instantiate(cardSquare, pos, Quaternion.identity, squareParent.transform) as GameObject;
-                    obj.name = square.name + "(" + zIndex + "," + xIndex + ")";
+                    if (laySquare)
+                    {
+                        obj = Instantiate(cardSquare, pos, Quaternion.identity, squareParent.transform) as GameObject;
+                        obj.name = square.name + " (" + zIndex + "," + xIndex + ")";
+                    }
+                    if(layCard)
+                    {
+                        obj = Instantiate(card, pos + new Vector3(0.0f, 1.0f, 0.0f), Quaternion.Euler(60,180,0), cardParent.transform) as GameObject;
+                        obj.name = card.name + " (" + zIndex + "," + xIndex + ")";
+                    }
                     pos.x += spaceScale.x;
                     xIndex++;
                     col++;
@@ -90,8 +111,11 @@ public class MapCreator : MonoBehaviour
                 }
                 else if (c == '-')
                 {
-                    obj = Instantiate(pathX, pos, Quaternion.identity, pathXParent.transform) as GameObject;
-                    obj.name = pathX.name + "(" + zIndex + "," + (xIndex - 1) + ") <-> (" + zIndex + "," + xIndex + ")";
+                    if (laySquare)
+                    {
+                        obj = Instantiate(path, pos, Quaternion.identity, pathParent.transform) as GameObject;
+                        obj.name = path.name + "X (" + zIndex + "," + (xIndex - 1) + ") <-> (" + zIndex + "," + xIndex + ")";
+                    }
                     pos.x += pathScale.x;
                     col++;
                 }
@@ -106,8 +130,11 @@ public class MapCreator : MonoBehaviour
                 }
                 else if(c == '|')
                 {
-                    obj = Instantiate(pathZ, pos, Quaternion.identity, pathZParent.transform) as GameObject;
-                    obj.name = pathZ.name + "(" + zIndex + "," + xIndex + ") <-> (" + (zIndex + 1) + "," + xIndex + ")";
+                    if (laySquare)
+                    {
+                        obj = Instantiate(path, pos, Quaternion.Euler(0,90,0), pathParent.transform) as GameObject;
+                        obj.name = path.name + "Z (" + zIndex + "," + xIndex + ") <-> (" + (zIndex + 1) + "," + xIndex + ")";
+                    }
                     pos.x += spaceScale.x;
                     col++;
                 }
